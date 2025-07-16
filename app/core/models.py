@@ -7,6 +7,9 @@ class Book(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     title = models.CharField(max_length=200)
 
+    def __str__(self):
+        return f"{self.title} by {self.author}"
+
 class Branch (models.Model):
     BranchName = models.CharField(max_length=100)
     BranchAddress = models.CharField(max_length=200)
@@ -14,6 +17,10 @@ class Branch (models.Model):
     BranchState = models.CharField(max_length=100)
     BranchZip = models.CharField(max_length=20)
     BranchPhone = models.CharField(max_length=20)
+
+    def __str__(self):
+        return f"{self.BranchName} - {self.BranchCity}, {self.BranchState}"
+
 class Inventory(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)

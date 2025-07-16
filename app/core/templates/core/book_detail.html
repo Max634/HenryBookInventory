@@ -1,0 +1,169 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ book.title }} - Henry Book Inventory{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:book_list' %}">Books</a></li>
+                <li class="breadcrumb-item active">{{ book.title }}</li>
+            </ol>
+        </nav>
+        <div>
+            <a href="{% url 'core:book_edit' book.id %}" class="btn btn-primary">
+                <i class="bi bi-pencil"></i> Edit Book
+            </a>
+            <a href="{% url 'core:book_delete' book.id %}" class="btn btn-outline-danger ms-2">
+                <i class="bi bi-trash"></i> Delete
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                {% if book.url %}
+                <img src="{{ book.url }}" class="card-img-top" alt="{{ book.title }}" 
+                     style="height: 300px; object-fit: cover;">
+                {% else %}
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
+                     style="height: 300px;">
+                    <i class="bi bi-book display-4 text-muted"></i>
+                </div>
+                {% endif %}
+                
+                <div class="card-body">
+                    <h5 class="card-title">{{ book.title }}</h5>
+                    <p class="card-text">
+                        <i class="bi bi-person"></i> <strong>Author:</strong> {{ book.author }}
+                    </p>
+                    <p class="card-text">
+                        <i class="bi bi-currency-dollar"></i> <strong>Price:</strong> 
+                        <span class="h5 text-primary">${{ book.price }}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Book Description</h5>
+                </div>
+                <div class="card-body">
+                    {% if book.description %}
+                        <p class="card-text">{{ book.description|linebreaks }}</p>
+                    {% else %}
+                        <p class="text-muted">No description available for this book.</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Inventory Information -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Inventory Status</h5>
+                    <a href="{% url 'core:inventory_create' %}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-plus"></i> Add to Inventory
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if inventory_items %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Branch</th>
+                                    <th>Location</th>
+                                    <th>Quantity</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in inventory_items %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'core:branch_detail' item.branch.id %}" 
+                                           class="text-decoration-none">
+                                            {{ item.branch.BranchName }}
+                                        </a>
+                                    </td>
+                                    <td>{{ item.branch.BranchCity }}, {{ item.branch.BranchState }}</td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ item.quantity }}</span>
+                                    </td>
+                                    <td>
+                                        {% if item.quantity < 5 %}
+                                        <span class="badge bg-danger">Low Stock</span>
+                                        {% elif item.quantity < 20 %}
+                                        <span class="badge bg-warning">Medium Stock</span>
+                                        {% else %}
+                                        <span class="badge bg-success">Good Stock</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'core:inventory_edit' item.id %}" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a href="{% url 'core:inventory_delete' item.id %}" 
+                                               class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title">Total Stock</h6>
+                                    <h3 class="text-primary">
+                                        {% with total=0 %}
+                                            {% for item in inventory_items %}
+                                                {% with total=total|add:item.quantity %}
+                                                {% endwith %}
+                                            {% endfor %}
+                                            {% for item in inventory_items %}
+                                                {% if forloop.last %}{{ total|add:item.quantity }}{% endif %}
+                                            {% endfor %}
+                                        {% endwith %}
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title">Available Branches</h6>
+                                    <h3 class="text-success">{{ inventory_items|length }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-box display-4 text-muted"></i>
+                        <h5 class="mt-3">No Inventory Records</h5>
+                        <p class="text-muted">This book is not currently stocked in any branch.</p>
+                        <a href="{% url 'core:inventory_create' %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Add to Inventory
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Edit Inventory - Henry Book Inventory{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">Edit Inventory</h1>
+        <a href="{% url 'core:inventory_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Inventory
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Book</label>
+                            <input type="text" class="form-control" 
+                                   value="{{ inventory.book.title }} by {{ inventory.book.author }}" 
+                                   readonly>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Branch</label>
+                            <input type="text" class="form-control" 
+                                   value="{{ inventory.branch.BranchName }} - {{ inventory.branch.BranchCity }}, {{ inventory.branch.BranchState }}" 
+                                   readonly>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Quantity *</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" 
+                                   value="{{ inventory.quantity }}" min="0" required>
+                            <div class="form-text">Current quantity: {{ inventory.quantity }}</div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Update Quantity
+                            </button>
+                            <a href="{% url 'core:inventory_list' %}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">Inventory Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>{{ inventory.book.title }}</h6>
+                        <p class="text-muted mb-1">by {{ inventory.book.author }}</p>
+                        <p class="text-primary">${{ inventory.book.price }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>{{ inventory.branch.BranchName }}</h6>
+                        <p class="text-muted mb-0">{{ inventory.branch.BranchAddress }}</p>
+                        <p class="text-muted">{{ inventory.branch.BranchCity }}, {{ inventory.branch.BranchState }}</p>
+                    </div>
+                    
+                    <div>
+                        <h6>Current Status</h6>
+                        {% if inventory.quantity < 5 %}
+                        <span class="badge bg-danger">Low Stock ({{ inventory.quantity }})</span>
+                        {% elif inventory.quantity < 20 %}
+                        <span class="badge bg-warning text-dark">Medium Stock ({{ inventory.quantity }})</span>
+                        {% else %}
+                        <span class="badge bg-success">Good Stock ({{ inventory.quantity }})</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
