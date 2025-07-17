@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Max634/HenryBookInventory'
+                checkout scm
             }
         }
         
