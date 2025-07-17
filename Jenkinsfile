@@ -21,14 +21,14 @@ pipeline
       steps{
         powershell '''
         docker build -t HenryBookInventory:django .
-        docker tag HenryBookInventory:django 842112866380.dkr.ecr.us-east-1.amazonaws.com/HenryBookInventory:django
+        docker tag HenryBookInventory:django 842112866380.dkr.ecr.us-east-1.amazonaws.com/henrybookstore
         '''
       }
     }
     stage('Push Docker Image'){
       steps{
         powershell '''
-        docker push 842112866380.dkr.ecr.us-east-1.amazonaws.com/HenryBookInventory:django
+        docker push 842112866380.dkr.ecr.us-east-1.amazonaws.com/henrybookstore
         '''
       }
     }
