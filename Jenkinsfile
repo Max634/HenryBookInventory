@@ -4,8 +4,8 @@ pipeline {
     environment {
         AWS_REGION = 'us-east-1'
         AWS_ACCOUNT_ID = '842112866380'
-        ECR_REPOSITORY = 'henry-book-inventory'  // Better name for your project
-        IMAGE_TAG = "${BUILD_NUMBER}"            // Dynamic tag using build number
+        ECR_REPOSITORY = 'test'                  // Back to your original name
+        IMAGE_TAG = 'django'                     // Back to your original tag
         ECR_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
     }
     
