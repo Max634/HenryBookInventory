@@ -19,8 +19,8 @@ pipeline {
     stage('Build Docker Image') {
       steps {
         powershell '''
-        docker build -t HenryBookInventory:django .
-        docker tag HenryBookInventory:django 842112866380.dkr.ecr.us-east-1.amazonaws.com/henrybookstore
+        docker build -t henrybookinventory:django .
+        docker tag henrybookinventory:django 842112866380.dkr.ecr.us-east-1.amazonaws.com/henrybookstore
         '''
       }
     }
@@ -35,7 +35,7 @@ pipeline {
   post {
     always {
       powershell '''
-      docker rmi -f HenryBookInventory:django 2>$null
+      docker rmi -f henrybookinventory:django 2>$null
       docker rmi -f 842112866380.dkr.ecr.us-east-1.amazonaws.com/henrybookstore 2>$null
       '''
     }
